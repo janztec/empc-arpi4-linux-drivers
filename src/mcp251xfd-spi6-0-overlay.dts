@@ -1,0 +1,78 @@
+/*
+ * Device tree overlay for mcp251x/can6 on spi6.0
+ */
+ 
+/dts-v1/;
+/plugin/;
+ 
+/ {
+    compatible = "brcm,bcm2835";
+ 
+    /* spi6 config */
+    fragment@0 {
+        target = <&spi6>;
+        __overlay__ {
+            /* needed to avoid dtc warning */
+            #adress-cells = <1>;
+            #size-cells = <0>;
+ 
+            status = "okay";
+            pinctrl-names = "default";
+            pinctrl-0 = <&spi6_pins>;
+        };
+    };
+ 
+    /* the interrupt pin of the can-controller */
+    fragment@1 {
+        target = <&gpio>;
+        __overlay__ {
+            can6_pins: can6_pins {
+                brcm,pins = <25>; /* gpio25, hardware pin 22 */
+                brcm,function = <0>; /* input */
+            };
+        };
+    };
+ 
+    /* the clock/oscillator of the can-controller */
+    fragment@2 {
+        target-path = "/clocks";
+        __overlay__ {
+            /* external oscillator of mcp2515 on SPI6.0 */
+            can6_osc: can6_osc {
+                compatible = "fixed-clock";
+                #clock-cells = <0>;
+                clock-frequency  = <40000000>;
+            };
+        };
+    };
+ 
+    /* the spi config of the can-controller itself binding everything together */
+    fragment@3 {
+        target = <&spi6>;
+        __overlay__ {
+            /* needed to avoid dtc warning */
+            #address-cells = <1>;
+            #size-cells = <0>;
+ 
+            can6: mcp251xfd@0 {
+                reg = <0>;
+                compatible = "microchip,mcp251xfd";
+                pinctrl-names = "default";
+                pinctrl-0 = <&can6_pins>;
+                spi-max-frequency = <10000000>;
+                interrupt-parent = <&gpio>;
+                interrupts = <25 8>; /* IRQ_TYPE_LEVEL_LOW */
+                clocks = <&can6_osc>;
+            };
+        };
+    };
+ 
+    __overrides__ {
+        oscillator = <&can6_osc>,"clock-frequency:0";
+        spimaxfrequency = <&can6>,"spi-max-frequency:0";
+        interrupt_pin = <&can6_pins>,"brcm,pins:0",
+                        <&can6>,"interrupts:0";
+    };
+};
+ 
+   

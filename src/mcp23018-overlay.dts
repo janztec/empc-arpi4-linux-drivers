@@ -1,0 +1,32 @@
+// Definitions for mcp23018 Gpio Extender from Microchip Semiconductor
+ 
+/dts-v1/;
+/plugin/;
+ 
+/ {
+    compatible = "brcm,bcm2835";
+ 
+    fragment@0 {
+        target = <&i2c1>;
+        __overlay__ {
+            status = "okay";
+        };
+    };
+ 
+    fragment@1 {
+        target = <&i2c1>;
+        __overlay__ {
+            #address-cells = <1>;
+            #size-cells = <0>;
+ 
+            mcp23018: mcp@20 {
+                compatible = "microchip,mcp23018";
+                reg = <0x20>;
+                gpio-controller;
+                #gpio-cells = <2>;
+ 
+                status = "okay";
+            };
+        };
+    };
+};

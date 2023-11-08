@@ -1,0 +1,27 @@
+/*
+ * Device Tree overlay for the Infineon SLB9670 Trusted Platform Module on SPI 6.2
+ */
+ 
+/dts-v1/;
+/plugin/;
+ 
+/ {
+        compatible = "brcm,bcm2711";
+ 
+        fragment@0 {
+                target = <&spi6>;
+                __overlay__ {
+                        /* needed to avoid dtc warning */
+                        #address-cells = <1>;
+                        #size-cells = <0>;
+                        slb9670: slb9670@2 {
+                                compatible = "infineon,slb9670";
+                                reg = <2>;      /* CE2 */
+                                #address-cells = <1>;
+                                #size-cells = <0>;
+                                spi-max-frequency = <32000000>;
+                                status = "okay";
+                        };
+                };
+        };
+};

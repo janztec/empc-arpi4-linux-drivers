@@ -1,0 +1,65 @@
+/dts-v1/;
+/plugin/;
+ 
+/ {
+    compatible = "brcm,bcm2835", "brcm,bcm2708", "brcm,bcm2709", "brcm,bcm2711";
+ 
+fragment@0 {
+        target = <&gpio>;
+        __overlay__ {
+ 
+            ttysc0_pins: ttysc0_pins {
+                brcm,pins = <26>;
+                brcm,function = <0>; /* input */
+            };
+ 
+            ttysc0_cs_pins: ttysc0_cs_pins {
+                brcm,pins = <27>;
+                brcm,function = <1>; /* output */
+            };
+        };
+    };
+ 
+        fragment@1 {
+                target = <&spi6>;
+                __overlay__ {
+                        #address-cells = <1>;
+                        #size-cells = <0>;
+                        pinctrl-names = "default";
+                        status = "okay";
+ 
+                        sc16is760: sc16is760@1 {
+                                compatible = "nxp,sc16is760";
+                                reg = <1>; /* CE1 */
+                                clocks = <&sc16is760_clk>;
+                                pinctrl-0 = <&ttysc0_pins>;
+                                interrupt-parent = <&gpio>;
+                                interrupts = <26 0x8>; /* IRQ_TYPE_LEVEL_LOW */
+                                gpio-controller;
+                                #gpio-cells = <2>;
+                                spi-max-frequency = <15000000>;
+                        };
+                };
+        };         
+        fragment@2 {
+                target = <&aux>;
+                __overlay__ {
+                        status = "okay";
+                };
+        };
+ 
+        fragment@3 {
+                target-path = "/";
+                __overlay__ {
+                        sc16is760_clk: sc16is760_spi6_1_clk {
+                                compatible = "fixed-clock";
+                                #clock-cells = <0>;
+                                clock-frequency = <1843200>;
+                        };
+                };
+        };
+ 
+    __overrides__ {
+      int_pin = <&sc16is760>,"interrupts:0";
+    };
+};
