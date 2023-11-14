@@ -59,7 +59,7 @@ WELCOME="These drivers and tools will be installed:\n
 - TPM driver
 - GPIO port expander driver
 - RTC driver
-- can-utils, device-tree-compiler, gpio tools\n
+- can-utils, device-tree-compiler, gpio tools, socat\n
 continue installation?"
 
 if (whiptail --title "emPC-A/RPI4 Installation Script" --yesno "$WELCOME" 20 60) then
@@ -68,7 +68,7 @@ else
     exit 0
 fi
 
-apt -y install device-tree-compiler can-utils gpiod libgpiod-dev libgpiod-doc
+apt -y install device-tree-compiler can-utils gpiod libgpiod-dev libgpiod-doc socat
 
 
 rm -rf /tmp/empc-arpi-linux-drivers
