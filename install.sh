@@ -131,6 +131,7 @@ WELCOME2="These configuration settings will automatically be made:\n
 - Install RTC initialization in initramfs
 - Increase USB max. current
 - Enable previously installed drivers
+- Install rpi4 lte and gps service
 \ncontinue installation?\n"
 
 if (whiptail --title "emPC-A/RPI4 Installation Script" --yesno "$WELCOME2" 18 60) then
@@ -177,6 +178,10 @@ if test -e /boot/initramfs.gz; then
 	echo "initramfs initramfs.gz followkernel" >>/boot/config.txt
 fi
 
+# Download lte and gps service
+wget -nv $REPORAW/src/empc_lte -O /etc/init.d/empc_lte
+# Enable lte and gps service
+update-rc.d empc_lte defaults
 
 # Setting emPC-A/RPI4 specific codesys settings if codesys is installed
 if [ ! -f "/etc/CODESYSControl.cfg" ]; then
@@ -189,7 +194,6 @@ else
         bash codesys-settings.sh
     fi
 fi
-
 
 # Finish
 if (whiptail --title "emPC-A/RPI4 Installation Script" --yesno "Installation completed! reboot required\n\nreboot now?" 12 60) then

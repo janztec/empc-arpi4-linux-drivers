@@ -1,0 +1,61 @@
+#! /bin/bash
+ 
+### BEGIN INIT INFO
+# Provides:             empc enable
+# Required-Start:       $remote_fs $syslog
+# Required-Stop:        $remote_fs $syslog
+# Default-Start:        2 3 4 5
+# Default-Stop:         0 1 6
+# Short-Description:    start empc-arpi4 lte modem
+### END INIT INFO
+ 
+ 
+do_start() {
+        sleep 30
+        echo "Enable power at LTE modem VBUS"
+        gpioset mcp23018 5=0
+        sleep 5
+        echo "Pull LTE modem PWRKEY"
+        gpioset mcp23018 8=0
+        sleep 1
+        gpioset mcp23018 8=1
+        sleep 20
+        gpioget mcp23018 10 | grep -q '0' && echo "Successfully started empc-arpi4 LTE modem!" || echo "Starting empc-arpi4 LTE modem failed!"
+ 
+        echo "Enable GPS"
+        echo "AT+QGPS=1" | socat - /dev/$(get_at_device),crnl
+}
+ 
+do_stop() {
+        gpioget mcp23018 10 | grep -q '0' && gpioset mcp23018 8=0 && sleep 1 && gpioset mcp23018 8=1 && sleep 1 && gpioset mcp23018 14=0 && echo "AT+QGPS=0" | socat - /dev/$(get_at_device),crnl
+}
+ 
+get_at_device() {
+        # Find correct ttyUSB for AT Interface
+        usb_tty_devs=$(readlink -f /sys/class/tty/ttyUSB*)
+        for subpath in $usb_tty_devs
+        do
+                if (cat $subpath/../../../interface | grep -q "Mobile AT Interface")
+                then
+                        at_dev=$(basename $subpath)
+                fi
+        done
+        echo $at_dev
+}
+ 
+case "$1" in
+  start|"")
+        do_start
+        ;;
+  restart|reload|force-reload)
+        echo "Error: argument '$1' not supported" >&2
+        exit 3
+        ;;
+  stop)
+        do_stop
+        ;;
+  *)
+        echo "Usage: empc_lte [start|stop]" >&2
+        exit 3
+        ;;
+esac
