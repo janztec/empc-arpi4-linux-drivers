@@ -70,6 +70,9 @@ disable_overscan=1
 # enable more than 600mA for USB ports
 max_usb_current=1
 
+# SERIAL CONSOLE
+enable_uart=1
+
 # SPI6
 dtoverlay=spi6-3cs
 dtparam=cs0_spidev=off,cs1_spidev=off,cs2_spidev=off
