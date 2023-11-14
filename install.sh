@@ -181,6 +181,7 @@ fi
 # Download lte and gps service
 wget -nv $REPORAW/src/empc_lte -O /etc/init.d/empc_lte
 # Enable lte and gps service
+chmod +x /etc/init.d/empc_lte
 update-rc.d empc_lte defaults
 
 # Setting emPC-A/RPI4 specific codesys settings if codesys is installed
