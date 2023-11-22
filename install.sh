@@ -108,11 +108,7 @@ fi
 if grep -q "gpioget mcp23018 2" "/etc/rc.local"; then
     echo ""
 else
-    # Adding RS485 Jumper Check to /etc/rc.local
-    echo -e "$INFO INFO: Installing RS232/RS485 jumper check in /etc/rc.local $NC"
     sed -i 's/exit 0//g' /etc/rc.local
-    echo '# if jumper J301 is not set, switch /dev/ttySC0 to RS485 mode' >> /etc/rc.local
-    echo 'gpioget mcp23018 2 | grep -q '"'"'1'"'"' && /usr/sbin/tty-auto-rs485 /dev/ttySC0' >> /etc/rc.local
 
     # Adding instantiation of mcp23018 port expander i2c device to /etc/rc.local
     echo '# Instatiate mcp23018 port expander i2c device' >> /etc/rc.local
@@ -121,6 +117,11 @@ else
     # Adding instantiation of rv8803 rtc i2c device to /etc/rc.local
     echo '# Instatiate rv8803 rtc i2c device' >> /etc/rc.local
     echo "echo rv8803 0x32 > /sys/bus/i2c/devices/i2c-1/new_device" >> /etc/rc.local
+    
+    # Adding RS485 Jumper Check to /etc/rc.local
+    echo -e "$INFO INFO: Installing RS232/RS485 jumper check in /etc/rc.local $NC"
+    echo '# if jumper J301 is not set, switch /dev/ttySC0 to RS485 mode' >> /etc/rc.local
+    echo 'gpioget mcp23018 2 | grep -q '"'"'1'"'"' && /usr/sbin/tty-auto-rs485 /dev/ttySC0' >> /etc/rc.local
 
     echo "exit 0" >>/etc/rc.local
 fi
