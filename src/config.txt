@@ -79,9 +79,6 @@ dtparam=cs0_spidev=off,cs1_spidev=off,cs2_spidev=off
 
 # CAN on SPI6.0
 dtoverlay=mcp251xfd-spi6-0,interrupt_pin=25,oscillator=40000000
- 
-# CAN extension on SPI0.0
-dtoverlay=mcp251xfd,spi0-0,interrupt=16,oscillator=40000000
 
 # UART
 dtoverlay=sc16is760-spi6
