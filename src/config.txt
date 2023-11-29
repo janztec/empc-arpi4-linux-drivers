@@ -73,7 +73,8 @@ max_usb_current=1
 # SERIAL CONSOLE
 enable_uart=1
 
-# SPI6
+# SPI
+dtoverlay=spi0-1cs
 dtoverlay=spi6-3cs
 dtparam=cs0_spidev=off,cs1_spidev=off,cs2_spidev=off
 
