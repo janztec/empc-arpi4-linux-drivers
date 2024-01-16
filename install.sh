@@ -105,28 +105,6 @@ if [ ! -f "/usr/sbin/tty-auto-rs485" ]; then
         exit 1
 fi
 
-if grep -q "gpioget mcp23018 2" "/etc/rc.local"; then
-    echo ""
-else
-    sed -i 's/exit 0//g' /etc/rc.local
-
-    # Adding instantiation of mcp23018 port expander i2c device to /etc/rc.local
-    echo '# Instatiate mcp23018 port expander i2c device' >> /etc/rc.local
-    echo "echo mcp23018 0x20 > /sys/bus/i2c/devices/i2c-1/new_device" >> /etc/rc.local
-
-    # Adding instantiation of rv8803 rtc i2c device to /etc/rc.local
-    echo '# Instatiate rv8803 rtc i2c device' >> /etc/rc.local
-    echo "echo rv8803 0x32 > /sys/bus/i2c/devices/i2c-1/new_device" >> /etc/rc.local
-    
-    # Adding RS485 Jumper Check to /etc/rc.local
-    echo -e "$INFO INFO: Installing RS232/RS485 jumper check in /etc/rc.local $NC"
-    echo '# if jumper J301 is not set, switch /dev/ttySC0 to RS485 mode' >> /etc/rc.local
-    echo 'gpioget mcp23018 2 | grep -q '"'"'1'"'"' && /usr/sbin/tty-auto-rs485 /dev/ttySC0' >> /etc/rc.local
-
-    echo "exit 0" >>/etc/rc.local
-fi
-
-
 WELCOME2="These configuration settings will automatically be made:\n
 - Install emPC-A/RPI4 default config.txt
 - Install RTC initialization in initramfs
@@ -179,8 +157,23 @@ if test -e /boot/initramfs.gz; then
 	echo "initramfs initramfs.gz followkernel" >>/boot/config.txt
 fi
 
+# Download i2c device initialization service
+wget -nv $REPORAW/src/instantiate_i2c -O /etc/init.d/instantiate_i2c
+
+# Download check rs485 service
+wget -nv $REPORAW/src/check_rs485 -O /etc/init.d/check_rs485
+
 # Download lte and gps service
 wget -nv $REPORAW/src/empc_lte -O /etc/init.d/empc_lte
+
+# Enable i2c device initialization service service
+chmod +x /etc/init.d/instantiate_i2c
+update-rc.d instantiate_i2c defaults
+
+# Enable check rs485 service
+chmod +x /etc/init.d/check_rs485
+update-rc.d check_rs485 defaults
+
 # Enable lte and gps service
 chmod +x /etc/init.d/empc_lte
 update-rc.d empc_lte defaults

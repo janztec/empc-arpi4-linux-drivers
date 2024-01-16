@@ -1,0 +1,35 @@
+#! /bin/bash
+
+### BEGIN INIT INFO
+# Provides:             check_rs485
+# Required-Start:       $remote_fs $syslog $instantiate_i2c
+# Required-Stop:        $remote_fs $syslog
+# Default-Start:        2 3 4 5
+# Default-Stop:         0 1 6
+# Short-Description:    enable rs485 if jumper is set
+### END INIT INFO
+
+
+do_start() {
+        gpioget mcp23018 2 | grep -q '1' && /usr/sbin/tty-auto-rs485 /dev/ttySC0
+}
+
+do_stop() {
+}
+
+case "$1" in
+  start|"")
+        do_start
+        ;;
+  restart|reload|force-reload)
+        echo "Error: argument '$1' not supported" >&2
+        exit 3
+        ;;
+  stop)
+        do_stop
+        ;;
+  *)
+        echo "Usage: empc_lte [start|stop]" >&2
+        exit 3
+        ;;
+esac
