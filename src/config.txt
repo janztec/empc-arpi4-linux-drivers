@@ -40,7 +40,7 @@
 
 # Uncomment some or all of these to enable the optional hardware interfaces
 dtparam=i2c_arm=off
-dtparam=i2c_vc=on
+dtparam=i2c_vc=off
 dtoverlay=i2c-gpio,i2c_gpio_sda=2,i2c_gpio_scl=3,i2c_gpio_delay_us=1,bus=1
 #dtparam=i2s=on
 #dtparam=spi=on
@@ -73,15 +73,13 @@ max_usb_current=1
 # SERIAL CONSOLE
 enable_uart=1
 
-# SPI6
+# SPI
+dtoverlay=spi0-1cs
 dtoverlay=spi6-3cs
 dtparam=cs0_spidev=off,cs1_spidev=off,cs2_spidev=off
 
 # CAN on SPI6.0
 dtoverlay=mcp251xfd-spi6-0,interrupt_pin=25,oscillator=40000000
- 
-# CAN extension on SPI0.0
-dtoverlay=mcp251xfd,spi0-0,interrupt=16,oscillator=40000000
 
 # UART
 dtoverlay=sc16is760-spi6
