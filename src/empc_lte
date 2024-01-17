@@ -1,37 +1,94 @@
 #! /bin/bash
- 
+
 ### BEGIN INIT INFO
-# Provides:             empc enable
-# Required-Start:       $remote_fs $syslog
+# Provides:             empc_lte
+# Required-Start:       $remote_fs $syslog $instantiate_i2c
 # Required-Stop:        $remote_fs $syslog
 # Default-Start:        2 3 4 5
 # Default-Stop:         0 1 6
 # Short-Description:    start empc-arpi4 lte modem
 ### END INIT INFO
- 
- 
+
 do_start() {
-        sleep 30
-        echo "Enable power at LTE modem VBUS"
-        gpioset mcp23018 5=0
-        sleep 5
-        echo "Pull LTE modem PWRKEY"
-        gpioset mcp23018 8=0
-        sleep 1
-        gpioset mcp23018 8=1
-        sleep 20
-        gpioget mcp23018 10 | grep -q '0' && echo "Successfully started empc-arpi4 LTE modem!" || echo "Starting empc-arpi4 LTE modem failed!"
- 
-        echo "Enable GPS"
-        echo "AT+QGPS=1" | socat - /dev/$(get_at_device),crnl
+        if [ $(gpioget mcp23018 10) -eq 1 ]
+	then
+                sleep 5
+                echo "Enable power at LTE modem VBUS"
+                gpioset mcp23018 5=0
+                sleep 5
+                echo "Pull LTE modem PWRKEY"
+                gpioset mcp23018 8=0
+                sleep 1
+                gpioset mcp23018 8=1
+                sleep 1
+
+                # If lte modem is not yet up, check again every second up to 30 seconds
+                for check_retry in $(seq 30)
+                do
+                        if [ $(gpioget mcp23018 10) -eq 1 ]
+                        then
+                                sleep 1
+                        else
+                                break
+                        fi
+                done
+
+                if [ $(gpioget mcp23018 10) -eq 0 ]
+                then
+
+			for lsusb_check in $(seq 30)
+			do
+				lsusb -d "2c7c:6002" > /dev/null
+				if [ $? -eq 1 ]
+				then
+					sleep 1
+				else
+					break
+				fi
+			done
+
+
+			lsusb -d "2c7c:6002" > /dev/null
+                        if [ $? -eq 1 ]
+                        then
+				echo "LTE USB device could not be found!"
+				exit 1
+			fi
+
+                        echo "Successfully started empc-arpi4 LTE modem after $retry attempts!"
+
+                        at_device=$(get_at_device)
+
+                        if [ -z $at_device ]
+                        then
+                                echo "Could not find AT USB device, cannot enable GPS!"
+                                exit 1
+                        else
+                                echo "Enable GPS"
+                                echo "AT+QGPS=1" | socat - /dev/$at_device,crnl
+                        fi
+
+                        break
+                else
+                	echo "Starting empc-arpi4 LTE modem failed!"
+			exit 1
+                fi
+        fi
 }
- 
+
 do_stop() {
-        gpioget mcp23018 10 | grep -q '0' && gpioset mcp23018 8=0 && sleep 1 && gpioset mcp23018 8=1 && sleep 1 && gpioset mcp23018 14=0 && echo "AT+QGPS=0" | socat - /dev/$(get_at_device),crnl
+        if [ $(gpioget mcp23018 10) -eq 0 ]
+        then
+                echo "Stopping empc-arpi4 LTE modem!"
+                gpioset mcp23018 8=0
+                sleep 1
+                gpioset mcp23018 8=1
+                sleep 1
+        fi
 }
- 
+
 get_at_device() {
-        # Find correct ttyUSB for AT Interface
+	# Find correct ttyUSB for AT Interface
         usb_tty_devs=$(readlink -f /sys/class/tty/ttyUSB*)
         for subpath in $usb_tty_devs
         do
@@ -42,7 +99,7 @@ get_at_device() {
         done
         echo $at_dev
 }
- 
+
 case "$1" in
   start|"")
         do_start
