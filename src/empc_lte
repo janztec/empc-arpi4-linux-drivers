@@ -67,8 +67,6 @@ do_start() {
                                 echo "Enable GPS"
                                 echo "AT+QGPS=1" | socat - /dev/$at_device,crnl
                         fi
-
-                        break
                 else
                 	echo "Starting empc-arpi4 LTE modem failed!"
 			exit 1
