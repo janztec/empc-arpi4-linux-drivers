@@ -28,7 +28,6 @@ do_start() {
 
         if [ $(gpioget mcp23018 10) -eq 1 ]
 	then
-                sleep 5
                 echo "Enable power at LTE modem VBUS"
                 gpioset mcp23018 5=0
                 sleep 5
