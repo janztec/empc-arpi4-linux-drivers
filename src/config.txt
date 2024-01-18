@@ -39,7 +39,7 @@
 #arm_freq=800
 
 # Uncomment some or all of these to enable the optional hardware interfaces
-dtparam=i2c_arm=off
+dtparam=i2c_arm=on
 dtparam=i2c_vc=off
 dtoverlay=i2c-gpio,i2c_gpio_sda=2,i2c_gpio_scl=3,i2c_gpio_delay_us=1,bus=1
 #dtparam=i2s=on
