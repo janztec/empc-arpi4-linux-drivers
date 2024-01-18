@@ -11,26 +11,24 @@
 
 do_start() {
 
-        echo -n "waiting for mcp23018"
-        for check_gpio in $(seq 30)
-        do
-                echo -n .
-                if (gpiodetect | grep -q "mcp23018")
-                then
-                        echo " found."
-                        break
-                else
-                        sleep 1
-                fi
-        done
+	echo -n "waiting for mcp23018"
+	for check_gpio in $(seq 30)
+	do
+		echo -n .
+		if (gpiodetect | grep -q "mcp23018")
+		then
+			echo " found."
+			break
+		else
+			sleep 1
+		fi
+	done
 
-        sleep 2
+        echo "Enable power at LTE modem VBUS"
+        gpioset mcp23018 5=0
 
         if [ $(gpioget mcp23018 10) -eq 1 ]
 	then
-                echo "Enable power at LTE modem VBUS"
-                gpioset mcp23018 5=0
-                sleep 5
                 echo "Pull LTE modem PWRKEY"
                 gpioset mcp23018 8=0
                 sleep 1
@@ -86,7 +84,9 @@ do_start() {
                 	echo "Starting empc-arpi4 LTE modem failed!"
 			exit 1
                 fi
-        fi
+        else
+		echo "lte modem already active."
+	fi
 }
 
 do_stop() {
@@ -96,7 +96,16 @@ do_stop() {
                 gpioset mcp23018 8=0
                 sleep 1
                 gpioset mcp23018 8=1
-                sleep 1
+                for check_modem_off in $(seq 30)
+                do
+                        if [ $(gpioget mcp23018 10) -eq 0 ]
+                        then
+                                sleep 1
+                        else
+                                break
+                        fi
+                done
+
         fi
 }
 
