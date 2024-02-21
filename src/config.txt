@@ -93,6 +93,9 @@ dtoverlay=mcp23018
 # RTC
 dtoverlay=i2c-rtc,rv8803
 
+# Enable external wifi antenna
+dtparam=ant2
+
 [cm4]
 # Enable host mode on the 2711 built-in XHCI USB controller.
 # This line should be removed if the legacy DWC2 controller is required
