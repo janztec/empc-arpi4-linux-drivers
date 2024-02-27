@@ -69,7 +69,8 @@ do_start() {
 			fi
 
                         echo "Successfully started empc-arpi4 LTE modem after $retry attempts!"
-
+                        
+                        sleep 1
                         at_device=$(get_at_device)
 
                         if [ -z $at_device ]
@@ -77,6 +78,7 @@ do_start() {
                                 echo "Could not find AT USB device, cannot enable GPS!"
                                 exit 1
                         else
+                                sleep 1
                                 echo "Enable GPS"
                                 echo "AT+QGPS=1" | socat - /dev/$at_device,crnl
                         fi
@@ -130,11 +132,24 @@ case "$1" in
         echo "Error: argument '$1' not supported" >&2
         exit 3
         ;;
+  reset)
+        gpioset mcp23018 9=0
+        sleep 1
+        gpioset mcp23018 9=1
+        ;;
+  status)
+        if [ $(gpioget mcp23018 10) -eq 1 ]
+        then
+                echo modem is off
+        else
+                echo modem is on
+        fi
+        ;;  
   stop)
         do_stop
         ;;
   *)
-        echo "Usage: empc_lte [start|stop]" >&2
+        echo "Usage: arpi4_lte [start|stop]" >&2
         exit 3
         ;;
 esac
