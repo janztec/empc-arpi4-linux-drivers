@@ -164,7 +164,7 @@ wget -nv $REPORAW/src/instantiate_i2c -O /etc/init.d/instantiate_i2c
 wget -nv $REPORAW/src/check_rs485 -O /etc/init.d/check_rs485
 
 # Download lte and gps service
-wget -nv $REPORAW/src/empc_lte -O /etc/init.d/empc_lte
+wget -nv $REPORAW/src/arpi4_lte -O /etc/init.d/arpi4_lte
 
 # Enable i2c device initialization service service
 chmod +x /etc/init.d/instantiate_i2c
@@ -175,8 +175,8 @@ chmod +x /etc/init.d/check_rs485
 update-rc.d check_rs485 defaults
 
 # Enable lte and gps service
-chmod +x /etc/init.d/empc_lte
-update-rc.d empc_lte defaults
+chmod +x /etc/init.d/arpi4_lte
+update-rc.d arpi4_lte defaults
 
 # Setting emPC-A/RPI4 specific codesys settings if codesys is installed
 if [ ! -f "/etc/CODESYSControl.cfg" ]; then
