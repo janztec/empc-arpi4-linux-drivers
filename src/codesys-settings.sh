@@ -25,7 +25,7 @@ else
     echo "ScriptName=rts_set_baud.sh" >>/etc/CODESYSControl.cfg
 fi
 
-sed -i 's/ip link set $1 type can bitrate $BITRATE/ip link set $1 type can bitrate $BITRATE sample-point 0.8 sjw 6 dbitrate 4000000 dsample-point 0.8 dsjw 2 fd on\nip link set $1 up txqueuelen 1000/' /opt/codesys/scripts/rts_set_baud.sh
+sed -i 's/ip link set $1 type can bitrate $BITRATE/ip link set $1 type can bitrate $BITRATE\nip link set $1 up txqueuelen 1000/' /opt/codesys/scripts/rts_set_baud.sh
 
 echo "INFO: disabling can0 and can1 startup service"
 sed -i -e 's/^/#/' /etc/network/interfaces.d/can0.interface
