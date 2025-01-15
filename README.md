@@ -17,3 +17,8 @@ cd /tmp
 wget https://raw.githubusercontent.com/janztec/empc-arpi4-linux-drivers/main/install.sh -O install.sh
 bash install.sh
 ```
+
+#### Unattended mode
+If you add the -y command line switch , you can activate the unattended mode.
+This will run the installation automatically without a need for human interaction.
+Please use this command line switch only if you are sure that all changes should be carried out by the installation script.
