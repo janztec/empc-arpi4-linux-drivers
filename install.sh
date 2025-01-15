@@ -51,6 +51,12 @@ if [[ $FREE -lt 1048576 ]]; then
   exit 1
 fi
 
+UNATTENDED=0
+
+if [ "$1" = "-y" ]
+then
+        UNATTENDED=1
+fi
 
 WELCOME="These drivers and tools will be installed:\n
 - SPI driver
@@ -62,10 +68,13 @@ WELCOME="These drivers and tools will be installed:\n
 - can-utils, device-tree-compiler, gpio tools, socat\n
 continue installation?"
 
-if (whiptail --title "emPC-A/RPI4 Installation Script" --yesno "$WELCOME" 20 60) then
-    echo ""
-else
-    exit 0
+if [ $UNATTENDED -eq 0 ]
+then
+    if (whiptail --title "emPC-A/RPI4 Installation Script" --yesno "$WELCOME" 20 60) then
+        echo ""
+    else
+        exit 0
+    fi
 fi
 
 apt -y install device-tree-compiler can-utils gpiod libgpiod-dev libgpiod-doc socat
@@ -100,9 +109,12 @@ wget -nv $REPORAW/src/tty-auto-rs485.c -O tty-auto-rs485.c
 gcc tty-auto-rs485.c -o /usr/sbin/tty-auto-rs485
 
 if [ ! -f "/usr/sbin/tty-auto-rs485" ]; then
-        echo -e "$ERR Error: Installation failed! (could not build tty-auto-rs485) $NC" 1>&2
+    echo -e "$ERR Error: Installation failed! (could not build tty-auto-rs485) $NC" 1>&2
+    if [ $UNATTENDED -eq 0 ]
+    then
         whiptail --title "Error" --msgbox "Installation failed! (could not build tty-auto-rs485)" 10 60
-        exit 1
+    fi
+    exit 1
 fi
 
 WELCOME2="These configuration settings will automatically be made:\n
@@ -113,10 +125,13 @@ WELCOME2="These configuration settings will automatically be made:\n
 - Install rpi4 lte and gps service
 \ncontinue installation?\n"
 
-if (whiptail --title "emPC-A/RPI4 Installation Script" --yesno "$WELCOME2" 18 60) then
-    echo ""
-else
-    exit 0
+if [ $UNATTENDED -eq 0 ]
+then
+    if (whiptail --title "emPC-A/RPI4 Installation Script" --yesno "$WELCOME2" 18 60) then
+        echo ""
+    else
+        exit 0
+    fi
 fi
 
 # Install emPC-A/RPI4 default config.txt
@@ -184,13 +199,24 @@ if [ ! -f "/etc/CODESYSControl.cfg" ]; then
 else
     echo -e "$INFO INFO: CODESYS installation found $NC"
 
-    if (whiptail --title "CODESYS installation found" --yesno "CODESYS specific settings:\n- Set SYS_COMPORT1 to /dev/ttySC0\n- Install rts_set_baud.sh SocketCan script\n\ninstall?" 16 60) then
+    if [ $UNATTENDED -eq 0 ]
+    then
+        if (whiptail --title "CODESYS installation found" --yesno "CODESYS specific settings:\n- Set SYS_COMPORT1 to /dev/ttySC0\n- Install rts_set_baud.sh SocketCan script\n\ninstall?" 16 60) then
+            wget -nv $REPORAW/src/codesys-settings.sh -O codesys-settings.sh
+            bash codesys-settings.sh
+        fi
+    else
         wget -nv $REPORAW/src/codesys-settings.sh -O codesys-settings.sh
         bash codesys-settings.sh
     fi
 fi
 
 # Finish
-if (whiptail --title "emPC-A/RPI4 Installation Script" --yesno "Installation completed! reboot required\n\nreboot now?" 12 60) then
-    reboot
+if [ $UNATTENDED -eq 0 ]
+then
+    if (whiptail --title "emPC-A/RPI4 Installation Script" --yesno "Installation completed! reboot required\n\nreboot now?" 12 60) then
+        reboot
+    fi
+else
+    echo "Installation completed! reboot required!"
 fi
