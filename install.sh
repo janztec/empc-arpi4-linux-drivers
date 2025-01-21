@@ -15,6 +15,21 @@ KERNELVER=$(($VERSION*100+$PATCHLEVEL))
 YEAR=$[`date +'%Y'`]
 DATE=$(date +"%Y%m%d_%H%M%S")
 
+# Check command line switches
+OPTSTRING=":yk"
+UNATTENDED=0
+IGNOREKERNEL=0
+
+while getopts ${OPTSTRING} opt; do
+  case ${opt} in
+    y)
+      UNATTENDED=1
+      ;;
+    k)
+      IGNOREKERNEL=1
+      ;;
+  esac
+done
 
 # Check if preconditions are met
 if [ $EUID -ne 0 ]; then
@@ -35,9 +50,12 @@ fi
 
 lsb_release -a 2>1 | grep "Raspbian GNU/Linux" || (echo -e "$ERR ERROR: Raspbian GNU/Linux required! $NC" 1>&2; exit 1;)
 
-if [ $KERNELVER -lt 601 ]; then 
-    echo -e "$ERR ERROR: Kernel is outdated! Please update your kernel or install the latest Raspberry PI OS! Kernel versions below 6.1.0 are not supported! $NC" 1>&2
-    exit 1
+# Only check for kernel version if k command line switch is not set
+if [ $IGNOREKERNEL -eq 0 ]; then
+    if [ $KERNELVER -lt 601 ]; then 
+        echo -e "$ERR ERROR: Kernel is outdated! Please update your kernel or install the latest Raspberry PI OS! Kernel versions below 6.1.0 are not supported! $NC" 1>&2
+        exit 1
+    fi
 fi
 
 if [ $YEAR -lt 2023 ] ; then
@@ -49,13 +67,6 @@ FREE=`df $PWD | awk '/[0-9]%/{print $(NF-2)}'`
 if [[ $FREE -lt 1048576 ]]; then
   echo -e "$ERR ERROR: 1GB free disk space required (run raspi-config, 'Expand Filesystem') $NC" > /dev/stderr
   exit 1
-fi
-
-UNATTENDED=0
-
-if [ "$1" = "-y" ]
-then
-        UNATTENDED=1
 fi
 
 WELCOME="These drivers and tools will be installed:\n
