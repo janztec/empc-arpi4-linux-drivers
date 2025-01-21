@@ -21,4 +21,5 @@ bash install.sh
 #### Unattended mode
 If you add the -y command line switch , you can activate the unattended mode.
 This will run the installation automatically without a need for human interaction.
+You can also add the -k command line switch to ignore the kernel version check, so you can use the installation script in e.g. build environments.
 Please use this command line switch only if you are sure that all changes should be carried out by the installation script.
