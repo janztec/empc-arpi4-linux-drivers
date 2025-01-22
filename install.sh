@@ -156,7 +156,7 @@ cp -rf $CONFIGPATH/config.txt $CONFIGPATH/config-backup-$DATE.txt
 
 # Download Janz Tec default config.txt
 echo -e "$INFO INFO: Using emPC-A/RPI4 default config.txt $NC" 1>&2
-wget -nv $REPORAW/src/config.txt -O /boot/config.txt
+wget -nv $REPORAW/src/config.txt -O $CONFIGPATH/config.txt
 
 # Download can0 and can1 network configuration files to /etc/network/interfaces.d/
 wget -nv $REPORAW/src/can0.interface -O /etc/network/interfaces.d/can0.interface
