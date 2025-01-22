@@ -146,8 +146,13 @@ then
 fi
 
 # Install emPC-A/RPI4 default config.txt
-echo -e "$INFO INFO: creating backup copy of config: /boot/config-backup-$DATE.txt $NC" 1>&2
-cp -rf /boot/config.txt /boot/config-backup-$DATE.txt
+CONFIGPATH=/boot/firmware
+if [ ! -f "$CONFIGPATH/config.txt" ]; then
+    CONFIGPATH=/boot
+fi
+
+echo -e "$INFO INFO: creating backup copy of config: $CONFIGPATH/config-backup-$DATE.txt $NC" 1>&2
+cp -rf $CONFIGPATH/config.txt $CONFIGPATH/config-backup-$DATE.txt
 
 # Download Janz Tec default config.txt
 echo -e "$INFO INFO: Using emPC-A/RPI4 default config.txt $NC" 1>&2
