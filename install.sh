@@ -164,6 +164,9 @@ wget -nv $REPORAW/src/can1.service -O /etc/systemd/system/can1.service
 systemctl enable can0.service
 systemctl enable can1.service
 
+# Download NetworkManager metric.conf to decrease metric of eth0 interface
+wget -nv $REPORAW/src/metric.conf -O /etc/NetworkManager/conf.d/eth0-metric.conf
+
 # Disable fake-hwclock as we have a real hwclock
 systemctl disable fake-hwclock
 systemctl mask fake-hwclock
