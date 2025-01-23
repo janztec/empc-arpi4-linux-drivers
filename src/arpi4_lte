@@ -82,18 +82,12 @@ do_start() {
                                 echo "Enable GPS"
                                 echo "AT+QGPS=1" | socat - /dev/$at_device,crnl
                         fi
-			
-			#Set usb0 interface down because not needed
-                        ifconfig usb0 down
                 else
                 	echo "Starting empc-arpi4 LTE modem failed!"
 			exit 1
                 fi
         else
 		echo "lte modem already active."
-			
-		#Set usb0 interface down because not needed
-		ifconfig usb0 down
 	fi
 }
 
