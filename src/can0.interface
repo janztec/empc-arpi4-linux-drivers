@@ -1,7 +1,0 @@
-# can0
-allow-hotplug can0
-iface can0 inet manual
-        pre-up /sbin/ip link set can0 type can bitrate 1000000 sample-point 0.8 sjw 6 dbitrate 4000000 dsample-point 0.8 dsjw 2 fd on
-        up /sbin/ifconfig can0 txqueuelen 1000
-        up /sbin/ifconfig can0 up
-        down /sbin/ifconfig can0 down

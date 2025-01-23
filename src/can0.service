@@ -1,0 +1,12 @@
+[Unit]
+Description=can0 interface setup
+After=network.target
+
+[Service]
+Type=oneshot
+ExecStart=/sbin/ip link set can0 type can bitrate 1000000 sample-point 0.8 sjw 6 dbitrate 4000000 dsample-point 0.8 dsjw 2 fd on
+ExecStart=/sbin/ip link set can0 up txqueuelen 1000
+RemainAfterExit=yes
+
+[Install]
+WantedBy=multi-user.target
