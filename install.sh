@@ -146,17 +146,18 @@ then
 fi
 
 # Install emPC-A/RPI4 default config.txt
-CONFIGPATH=/boot/firmware
-if [ ! -f "$CONFIGPATH/config.txt" ]; then
-    CONFIGPATH=/boot
+BOOTMOUNT=$(mount | grep -i mmcblk0p1 | cut -d' ' -f3)
+if [ -z $BOOTMOUNT ]; then
+    echo -e "$ERR ERROR: Couldn't find boot mountpoint. Is /dev/mmcblk0p1 not mounted? $NC" 1>&2
+    exit 1
 fi
 
-echo -e "$INFO INFO: creating backup copy of config: $CONFIGPATH/config-backup-$DATE.txt $NC" 1>&2
-cp -rf $CONFIGPATH/config.txt $CONFIGPATH/config-backup-$DATE.txt
+echo -e "$INFO INFO: creating backup copy of config: $BOOTMOUNT/config-backup-$DATE.txt $NC" 1>&2
+cp -rf $BOOTMOUNT/config.txt $BOOTMOUNT/config-backup-$DATE.txt
 
 # Download Janz Tec default config.txt
 echo -e "$INFO INFO: Using emPC-A/RPI4 default config.txt $NC" 1>&2
-wget -nv $REPORAW/src/config.txt -O $CONFIGPATH/config.txt
+wget -nv $REPORAW/src/config.txt -O $BOOTMOUNT/config.txt
 
 # Download can0 and can1 services to /etc/systemd/system/ and enable
 wget -nv $REPORAW/src/can0.service -O /etc/systemd/system/can0.service
@@ -184,13 +185,16 @@ wget -nv $REPORAW/src/hwclock.init-bottom -O /etc/initramfs-tools/scripts/init-b
 chmod +x /etc/initramfs-tools/hooks/hwclock
 chmod +x /etc/initramfs-tools/scripts/init-bottom/hwclock
 
+# set modules to list in initramfs driver policy to fix update-initramfs otherwise the system crashes when loading i2c module
+echo 'MODULES=list' > /etc/initramfs-tools/conf.d/driver-policy
+
 # Generate new initramfs
 echo -e "$INFO INFO: generating initramfs $NC"
-mkinitramfs -o /boot/initramfs.gz
+update-initramfs -u
 
-if test -e /boot/initramfs.gz; then
+if test -e $BOOTMOUNT/initramfs.gz; then
 	echo -e "$INFO INFO: Installing initramfs $NC"
-	echo "initramfs initramfs.gz followkernel" >>/boot/config.txt
+	echo "initramfs initramfs8 followkernel" >> $BOOTMOUNT/config.txt
 fi
 
 # Download i2c device initialization service
