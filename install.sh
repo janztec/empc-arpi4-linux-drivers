@@ -145,13 +145,20 @@ then
     fi
 fi
 
-# Install emPC-A/RPI4 default config.txt
+# Find boot partition mount point
 BOOTMOUNT=$(mount | grep -i mmcblk0p1 | cut -d' ' -f3)
 if [ -z $BOOTMOUNT ]; then
-    echo -e "$ERR ERROR: Couldn't find boot mountpoint. Is /dev/mmcblk0p1 not mounted? $NC" 1>&2
-    exit 1
+    if [ -f "/boot/firmware/config.txt" ]; then
+        BOOTMOUNT=/boot/firmware
+    elif [ -f "/boot/config.txt" ]; then
+        BOOTMOUNT=/boot
+    else
+        echo -e "$ERR ERROR: Couldn't find config.txt. Is boot partition not mounted? $NC" 1>&2
+        exit 1
+    fi
 fi
 
+# Install emPC-A/RPI4 default config.txt
 echo -e "$INFO INFO: creating backup copy of config: $BOOTMOUNT/config-backup-$DATE.txt $NC" 1>&2
 cp -rf $BOOTMOUNT/config.txt $BOOTMOUNT/config-backup-$DATE.txt
 
