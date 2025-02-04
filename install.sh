@@ -199,11 +199,6 @@ echo 'MODULES=list' > /etc/initramfs-tools/conf.d/driver-policy
 echo -e "$INFO INFO: generating initramfs $NC"
 update-initramfs -u
 
-if test -e $BOOTMOUNT/initramfs.gz; then
-	echo -e "$INFO INFO: Installing initramfs $NC"
-	echo "initramfs initramfs8 followkernel" >> $BOOTMOUNT/config.txt
-fi
-
 # Download i2c device initialization service
 wget -nv $REPORAW/src/instantiate_i2c -O /etc/init.d/instantiate_i2c
 
