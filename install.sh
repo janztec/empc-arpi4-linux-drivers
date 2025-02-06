@@ -184,21 +184,6 @@ update-rc.d fake-hwclock disable
 service hwclock.sh stop
 update-rc.d hwclock.sh disable
 
-# Read RTC time in initramfs (early as possible)
-# Download hwclock initramfs files
-wget -nv $REPORAW/src/hwclock.hooks -O /etc/initramfs-tools/hooks/hwclock
-wget -nv $REPORAW/src/hwclock.init-bottom -O /etc/initramfs-tools/scripts/init-bottom/hwclock
-
-chmod +x /etc/initramfs-tools/hooks/hwclock
-chmod +x /etc/initramfs-tools/scripts/init-bottom/hwclock
-
-# set modules to list in initramfs driver policy to fix update-initramfs otherwise the system crashes when loading i2c module
-echo 'MODULES=list' > /etc/initramfs-tools/conf.d/driver-policy
-
-# Generate new initramfs
-echo -e "$INFO INFO: generating initramfs $NC"
-update-initramfs -u
-
 # Download i2c device initialization service
 wget -nv $REPORAW/src/instantiate_i2c -O /etc/init.d/instantiate_i2c
 
