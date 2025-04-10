@@ -7,7 +7,7 @@ This script installs and configures device drivers for emPC-A/RPI4.
 ### Preconditions
  * Raspberry Pi OS 32-bit
  * Linux Kernel Version 6.1 or later
- * At least 1GB free disk space
+ * At least 10MB free disk space
  * Internet connection
 
 ### Installation
