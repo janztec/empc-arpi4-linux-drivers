@@ -168,9 +168,7 @@ wget -nv $REPORAW/src/config.txt -O $BOOTMOUNT/config.txt
 
 # Download can0 and can1 services to /etc/systemd/system/ and enable
 wget -nv $REPORAW/src/can0.service -O /etc/systemd/system/can0.service
-wget -nv $REPORAW/src/can1.service -O /etc/systemd/system/can1.service
 systemctl enable can0.service
-systemctl enable can1.service
 
 # Download NetworkManager metric.conf to decrease metric of eth0 interface
 wget -nv $REPORAW/src/metric.conf -O /etc/NetworkManager/conf.d/metric.conf
