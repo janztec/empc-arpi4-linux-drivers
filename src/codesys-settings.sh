@@ -5,24 +5,30 @@ if [ $EUID -ne 0 ]; then
     exit 1
 fi
 
-if grep -q "ttySC" "/etc/CODESYSControl.cfg"; then
+CODESYS_USER_CONFIG="/etc/CODESYSControl_User.cfg"
+
+# Use new codesys file location if available
+if [ -f "/etc/codesyscontrol/CODESYSControl_User.cfg" ]
+    CODESYS_USER_CONFIG="/etc/codesyscontrol/CODESYSControl_User.cfg"
+fi
+
+if grep -q "ttySC" $CODESYS_USER_CONFIG; then
         echo ""
 else
     echo "INFO: configuring COMPORT1 to /dev/ttySC0"
 
-    echo "" >>/etc/CODESYSControl.cfg
-    echo "[SysCom]" >>/etc/CODESYSControl.cfg
-    echo "Linux.Devicefile=/dev/ttySC" >>/etc/CODESYSControl.cfg
-    echo "portnum := COM.SysCom.SYS_COMPORT1;" >>/etc/CODESYSControl.cfg
+    echo "" >> $CODESYS_USER_CONFIG
+    echo "[SysCom]" >> $CODESYS_USER_CONFIG
+    echo "Linux.Devicefile=/dev/ttySC" >> $CODESYS_USER_CONFIG
 fi    
 
-if grep -q "rts_set_baud" "/etc/CODESYSControl.cfg"; then
+if grep -q "rts_set_baud" $CODESYS_USER_CONFIG; then
         echo ""
 else
-    echo "" >>/etc/CODESYSControl.cfg
-    echo "[CmpSocketCanDrv]" >>/etc/CODESYSControl.cfg
-    echo "ScriptPath=/opt/codesys/scripts" >>/etc/CODESYSControl.cfg
-    echo "ScriptName=rts_set_baud.sh" >>/etc/CODESYSControl.cfg
+    echo "" >> $CODESYS_USER_CONFIG
+    echo "[CmpSocketCanDrv]" >> $CODESYS_USER_CONFIG
+    echo "ScriptPath=/opt/codesys/scripts" >> $CODESYS_USER_CONFIG
+    echo "ScriptName=rts_set_baud.sh" >> $CODESYS_USER_CONFIG
 fi
 
 sed -i 's/ip link set $1 type can bitrate $BITRATE/ip link set $1 type can bitrate $BITRATE\nip link set $1 up txqueuelen 1000/' /opt/codesys/scripts/rts_set_baud.sh

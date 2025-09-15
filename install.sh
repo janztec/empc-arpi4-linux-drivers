@@ -206,9 +206,7 @@ chmod +x /etc/init.d/arpi4_lte
 update-rc.d arpi4_lte defaults
 
 # Setting emPC-A/RPI4 specific codesys settings if codesys is installed
-if [ ! -f "/etc/CODESYSControl.cfg" ]; then
-        echo ""
-else
+if [ -f "/etc/CODESYSControl.cfg" ] || [ -f "/etc/codesyscontrol/CODESYSControl.cfg" ]; then
     echo -e "$INFO INFO: CODESYS installation found $NC"
 
     if [ $UNATTENDED -eq 0 ]
