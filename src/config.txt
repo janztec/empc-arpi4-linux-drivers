@@ -96,6 +96,9 @@ dtoverlay=i2c-rtc,rv8803
 # Enable external wifi antenna
 dtparam=ant2
 
+# Disable Bluetooth for cybersecurity reasons by default, can be removed if Bluetooth is needed
+dtoverlay=disable-bt
+
 [cm4]
 # Enable host mode on the 2711 built-in XHCI USB controller.
 # This line should be removed if the legacy DWC2 controller is required
