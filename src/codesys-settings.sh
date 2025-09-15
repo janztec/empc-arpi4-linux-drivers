@@ -8,7 +8,7 @@ fi
 CODESYS_USER_CONFIG="/etc/CODESYSControl_User.cfg"
 
 # Use new codesys file location if available
-if [ -f "/etc/codesyscontrol/CODESYSControl_User.cfg" ]
+if [ -f "/etc/codesyscontrol/CODESYSControl_User.cfg" ]; then
     CODESYS_USER_CONFIG="/etc/codesyscontrol/CODESYSControl_User.cfg"
 fi
 
