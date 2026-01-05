@@ -3,9 +3,11 @@
 #include <string.h>
 #include <sys/types.h>
 #include <sys/stat.h>
+#include <sys/ioctl.h>
 #include <fcntl.h>
 #include <errno.h>
 #include <linux/serial.h>
+#include <unistd.h>
   
 #define TIOCGRS485      0x542E
 #define TIOCSRS485      0x542F
