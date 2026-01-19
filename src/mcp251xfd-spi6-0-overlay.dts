@@ -59,7 +59,7 @@
                 compatible = "microchip,mcp251xfd";
                 pinctrl-names = "default";
                 pinctrl-0 = <&can6_pins>;
-                spi-max-frequency = <10000000>;
+                spi-max-frequency = <20000000>;
                 interrupt-parent = <&gpio>;
                 interrupts = <25 8>; /* IRQ_TYPE_LEVEL_LOW */
                 clocks = <&can6_osc>;
