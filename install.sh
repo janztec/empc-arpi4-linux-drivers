@@ -64,8 +64,8 @@ if [ $YEAR -lt 2023 ] ; then
 fi
 
 FREE=`df $PWD | awk '/[0-9]%/{print $(NF-2)}'`
-if [[ $FREE -lt 1048576 ]]; then
-  echo -e "$ERR ERROR: 1GB free disk space required (run raspi-config, 'Expand Filesystem') $NC" > /dev/stderr
+if [[ $FREE -lt 10240 ]]; then
+  echo -e "$ERR ERROR: 10MB free disk space required (run raspi-config, 'Expand Filesystem') $NC" > /dev/stderr
   exit 1
 fi
 
