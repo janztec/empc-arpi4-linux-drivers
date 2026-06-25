@@ -101,14 +101,12 @@ wget -nv $REPORAW/src/spi6-3cs-overlay.dts -O spi6-3cs-overlay.dts
 wget -nv $REPORAW/src/mcp251xfd-spi6-0-overlay.dts -O mcp251xfd-spi6-0-overlay.dts
 wget -nv $REPORAW/src/sc16is760-spi6-overlay.dts -O sc16is760-spi6-overlay.dts
 wget -nv $REPORAW/src/tpm-slb9670-spi6-overlay.dts -O tpm-slb9670-spi6-overlay.dts
-wget -nv $REPORAW/src/mcp23018-overlay.dts -O mcp23018-overlay.dts
 
 # Build device tree overlays and copy to /boot/overlays
 dtc -@ -I dts -O dtb -o spi6-3cs.dtbo spi6-3cs-overlay.dts
 dtc -@ -I dts -O dtb -o mcp251xfd-spi6-0.dtbo mcp251xfd-spi6-0-overlay.dts
 dtc -@ -I dts -O dtb -o sc16is760-spi6.dtbo sc16is760-spi6-overlay.dts
 dtc -@ -I dts -O dtb -o tpm-slb9670-spi6.dtbo tpm-slb9670-spi6-overlay.dts
-dtc -@ -I dts -O dtb -o mcp23018.dtbo mcp23018-overlay.dts
 
 cp *.dtbo /boot/overlays/
 
