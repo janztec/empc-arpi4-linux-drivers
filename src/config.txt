@@ -87,12 +87,6 @@ dtoverlay=sc16is760-spi6
 # TPM
 dtoverlay=tpm-slb9670-spi6
 
-# GPIO Port Expander
-dtoverlay=mcp23018
-
-# RTC
-dtoverlay=i2c-rtc,rv8803
-
 # Enable external wifi antenna
 dtparam=ant2
 
