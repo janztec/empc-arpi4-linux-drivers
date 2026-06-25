@@ -74,8 +74,6 @@ WELCOME="These drivers and tools will be installed:\n
 - CAN-FD driver (SocketCAN)
 - Serial driver (RS232/RS485)
 - TPM driver
-- GPIO port expander driver
-- RTC driver
 - can-utils, device-tree-compiler, gpio tools, socat\n
 continue installation?"
 
